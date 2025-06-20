@@ -15,20 +15,20 @@ type IArticleService interface {
 	UpdateArticleStock(articleId string, req *dtos.UpdateStock) error
 }
 
-type ArticleService struct {
-	ArticleRepo repository.IArticle
+type articleService struct {
+	articleRepo repository.ArticleRepo
 }
 
-func NewArticleService() IArticleService {
-	return &ArticleService{
-		ArticleRepo: repository.NewArticle(),
+func NewArticleService(articleRepo repository.ArticleRepo) IArticleService {
+	return &articleService{
+		articleRepo: articleRepo,
 	}
 }
 
-func (a *ArticleService) CreateArticle(req *dtos.Article) error {
+func (a *articleService) CreateArticle(req *dtos.Article) error {
 	model := ArticleDtosToModel(req)
 
-	err := a.ArticleRepo.Create(model)
+	err := a.articleRepo.Create(model)
 	if err != nil {
 		return err
 	}
@@ -36,10 +36,10 @@ func (a *ArticleService) CreateArticle(req *dtos.Article) error {
 	return nil
 }
 
-func (a *ArticleService) UpdateArticle(id string, req *dtos.Article) error {
+func (a *articleService) UpdateArticle(id string, req *dtos.Article) error {
 	model := ArticleDtosToModel(req)
 
-	err := a.ArticleRepo.Update(id, model)
+	err := a.articleRepo.Update(id, model)
 	if err != nil {
 		return err
 	}
@@ -47,8 +47,8 @@ func (a *ArticleService) UpdateArticle(id string, req *dtos.Article) error {
 	return nil
 }
 
-func (a *ArticleService) GetArticle(articleId string) (*dtos.Article, error) {
-	article, err := a.ArticleRepo.Get(articleId)
+func (a *articleService) GetArticle(articleId string) (*dtos.Article, error) {
+	article, err := a.articleRepo.Get(articleId)
 	if err != nil {
 		return nil, err
 	}
@@ -58,8 +58,8 @@ func (a *ArticleService) GetArticle(articleId string) (*dtos.Article, error) {
 	return result[0], nil
 }
 
-func (a *ArticleService) ListArticle() ([]*dtos.Article, error) {
-	articles, err := a.ArticleRepo.GetAll()
+func (a *articleService) ListArticle() ([]*dtos.Article, error) {
+	articles, err := a.articleRepo.GetAll()
 	if err != nil {
 		return nil, err
 	}
@@ -67,8 +67,8 @@ func (a *ArticleService) ListArticle() ([]*dtos.Article, error) {
 	return ArticleModelToDtos(articles...), nil
 }
 
-func (a *ArticleService) DeleleArticle(articleId string) error {
-	err := a.ArticleRepo.Delele(articleId)
+func (a *articleService) DeleleArticle(articleId string) error {
+	err := a.articleRepo.Delele(articleId)
 	if err != nil {
 		return err
 	}
@@ -76,8 +76,8 @@ func (a *ArticleService) DeleleArticle(articleId string) error {
 	return nil
 }
 
-func (a *ArticleService) UpdateArticleStock(articleId string, req *dtos.UpdateStock) error {
-	err := a.ArticleRepo.UpdateArticleStock(articleId, req.NewStock)
+func (a *articleService) UpdateArticleStock(articleId string, req *dtos.UpdateStock) error {
+	err := a.articleRepo.UpdateArticleStock(articleId, req.NewStock)
 	if err != nil {
 		return err
 	}

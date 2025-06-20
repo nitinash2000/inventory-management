@@ -8,11 +8,20 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func GetArticle(ctx *gin.Context) {
+type Handler struct {
+	articleService articles.IArticleService
+}
+
+func NewHandler(articleService articles.IArticleService) *Handler {
+	return &Handler{
+		articleService: articleService,
+	}
+}
+
+func (h *Handler) GetArticle(ctx *gin.Context) {
 	id := ctx.Param("id")
 
-	a := articles.NewArticleService()
-	article, err := a.GetArticle(id)
+	article, err := h.articleService.GetArticle(id)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err.Error())
 		return
@@ -21,7 +30,7 @@ func GetArticle(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, article)
 }
 
-func CreateArticle(ctx *gin.Context) {
+func (h *Handler) CreateArticle(ctx *gin.Context) {
 	var req *dtos.Article
 
 	err := ctx.ShouldBindJSON(&req)
@@ -30,8 +39,7 @@ func CreateArticle(ctx *gin.Context) {
 		return
 	}
 
-	a := articles.NewArticleService()
-	err = a.CreateArticle(req)
+	err = h.articleService.CreateArticle(req)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err.Error())
 		return
@@ -40,11 +48,10 @@ func CreateArticle(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"message": "Article created successfully"})
 }
 
-func DeleteArticle(ctx *gin.Context) {
+func (h *Handler) DeleteArticle(ctx *gin.Context) {
 	id := ctx.Param("id")
 
-	a := articles.NewArticleService()
-	err := a.DeleleArticle(id)
+	err := h.articleService.DeleleArticle(id)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err.Error())
 		return
@@ -53,7 +60,7 @@ func DeleteArticle(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"message": "Article deleted successfully"})
 }
 
-func UpdateArticle(ctx *gin.Context) {
+func (h *Handler) UpdateArticle(ctx *gin.Context) {
 	id := ctx.Param("id")
 
 	var req *dtos.Article
@@ -63,8 +70,7 @@ func UpdateArticle(ctx *gin.Context) {
 		return
 	}
 
-	a := articles.NewArticleService()
-	err = a.UpdateArticle(id, req)
+	err = h.articleService.UpdateArticle(id, req)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err.Error())
 		return
@@ -73,9 +79,8 @@ func UpdateArticle(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"message": "Updated article successfully"})
 }
 
-func ListArticles(ctx *gin.Context) {
-	a := articles.NewArticleService()
-	articles, err := a.ListArticle()
+func (h *Handler) ListArticles(ctx *gin.Context) {
+	articles, err := h.articleService.ListArticle()
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err.Error())
 		return
@@ -84,7 +89,7 @@ func ListArticles(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, articles)
 }
 
-func UpdateArticleStock(ctx *gin.Context) {
+func (h *Handler) UpdateArticleStock(ctx *gin.Context) {
 	id := ctx.Param("id")
 	var req *dtos.UpdateStock
 
@@ -94,8 +99,7 @@ func UpdateArticleStock(ctx *gin.Context) {
 		return
 	}
 
-	a := articles.NewArticleService()
-	err = a.UpdateArticleStock(id, req)
+	err = h.articleService.UpdateArticleStock(id, req)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err.Error())
 		return
