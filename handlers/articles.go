@@ -63,14 +63,14 @@ func (h *Handler) DeleteArticle(ctx *gin.Context) {
 func (h *Handler) UpdateArticle(ctx *gin.Context) {
 	id := ctx.Param("id")
 
-	var req *dtos.Article
-	err := ctx.ShouldBindJSON(req)
+	var req dtos.Article
+	err := ctx.ShouldBindJSON(&req)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
 
-	err = h.articleService.UpdateArticle(id, req)
+	err = h.articleService.UpdateArticle(id, &req)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err.Error())
 		return

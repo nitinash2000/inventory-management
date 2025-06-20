@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-type ArticlesTestSuite struct {
+type articleServiceTestSuite struct {
 	suite.Suite
 	mockCtrl        *gomock.Controller
 	mockArticleRepo *mocks.MockArticleRepo
@@ -19,10 +19,10 @@ type ArticlesTestSuite struct {
 }
 
 func TestArticleTestSuite(t *testing.T) {
-	suite.Run(t, new(ArticlesTestSuite))
+	suite.Run(t, new(articleServiceTestSuite))
 }
 
-func (suite *ArticlesTestSuite) SetupTest() {
+func (suite *articleServiceTestSuite) SetupTest() {
 	suite.mockCtrl = gomock.NewController(suite.T())
 
 	suite.mockArticleRepo = mocks.NewMockArticleRepo(suite.mockCtrl)
@@ -30,7 +30,7 @@ func (suite *ArticlesTestSuite) SetupTest() {
 	suite.articleService = NewArticleService(suite.mockArticleRepo)
 }
 
-func (suite *ArticlesTestSuite) TestCreateArticle() {
+func (suite *articleServiceTestSuite) TestCreateArticle() {
 	req := &dtos.Article{
 		ArticleId:   "123",
 		ArticleName: "Test Article",
@@ -51,7 +51,7 @@ func (suite *ArticlesTestSuite) TestCreateArticle() {
 	assert.NoError(suite.T(), err)
 }
 
-func (suite *ArticlesTestSuite) TestGetArticle() {
+func (suite *articleServiceTestSuite) TestGetArticle() {
 	expected := &dtos.Article{
 		ArticleId:   "123",
 		ArticleName: "Test Article",
@@ -73,7 +73,7 @@ func (suite *ArticlesTestSuite) TestGetArticle() {
 	assert.Equal(suite.T(), expected, result)
 }
 
-func (suite *ArticlesTestSuite) TestUpdateArticle() {
+func (suite *articleServiceTestSuite) TestUpdateArticle() {
 	req := &dtos.Article{
 		ArticleId:   "123",
 		ArticleName: "Test Article",
@@ -94,14 +94,14 @@ func (suite *ArticlesTestSuite) TestUpdateArticle() {
 	assert.NoError(suite.T(), err)
 }
 
-func (suite *ArticlesTestSuite) TestDeleteArticle() {
+func (suite *articleServiceTestSuite) TestDeleteArticle() {
 	suite.mockArticleRepo.EXPECT().Delele("123").Return(nil).Times(1)
 
 	err := suite.articleService.DeleleArticle("123")
 	assert.NoError(suite.T(), err)
 }
 
-func (suite *ArticlesTestSuite) TestListArticle() {
+func (suite *articleServiceTestSuite) TestListArticle() {
 	expectedDto := []*dtos.Article{
 		{
 			ArticleId:   "123",
@@ -139,7 +139,7 @@ func (suite *ArticlesTestSuite) TestListArticle() {
 	assert.Equal(suite.T(), expectedDto, result)
 }
 
-func (suite *ArticlesTestSuite) TestUpdateArticleStock() {
+func (suite *articleServiceTestSuite) TestUpdateArticleStock() {
 	req := &dtos.UpdateStock{
 		NewStock: 50,
 	}

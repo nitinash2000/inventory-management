@@ -1,4 +1,5 @@
 {
   "app_name": "inv-mgmt",
-  "server_port": "9000"
+  "server_port": "9000",
+  "db_url": ""
 }
