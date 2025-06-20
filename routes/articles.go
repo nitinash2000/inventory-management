@@ -2,24 +2,15 @@ package routes
 
 import (
 	"inventory-management/handlers"
-	"inventory-management/models"
 	"inventory-management/repository"
 	"inventory-management/services/articles"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
-func ArticleRoutes(r *gin.Engine) {
-	articleMap := map[string]*models.Article{
-		"123": {
-			ArticleId:   "123",
-			ArticleName: "Book",
-			Price:       200,
-			Stock:       4,
-		},
-	}
-
-	articleRepo := repository.NewArticleRepo(articleMap)
+func ArticleRoutes(r *gin.Engine, db *gorm.DB) {
+	articleRepo := repository.NewArticleRepo(db)
 	articleService := articles.NewArticleService(articleRepo)
 	articleHandler := handlers.NewHandler(articleService)
 

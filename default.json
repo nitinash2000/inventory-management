@@ -1,5 +1,5 @@
 {
   "app_name": "inv-mgmt",
   "server_port": "9000",
-  "db_url": ""
+  "db_url": "root@tcp(localhost:3306)/inventory?charset=utf8mb4&parseTime=True&loc=Local"
 }

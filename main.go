@@ -9,6 +9,8 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
 func GetConfig(filePath string) (*config.Config, error) {
@@ -38,13 +40,19 @@ func main() {
 		os.Exit(1)
 	}
 
+	db, err := gorm.Open(mysql.Open(config.DbUrl), &gorm.Config{})
+	if err != nil {
+		log.Fatalf("failed to connect to the database: %v", err)
+		os.Exit(0)
+	}
+
 	if config.ServerPort == "" {
 		config.ServerPort = "8080"
 	}
 
 	r := gin.Default()
 
-	routes.Router(r)
+	routes.Router(r, db)
 
 	r.Run(":" + config.ServerPort)
 }
