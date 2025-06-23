@@ -11,7 +11,7 @@ type ArticleRepo interface {
 	Update(articleId string, article *models.Article) error
 	Get(articleId string) (*models.Article, error)
 	GetAll() ([]*models.Article, error)
-	Delele(articleId string) error
+	Delete(articleId string) error
 	UpdateArticleStock(articleId string, stock int64) error
 }
 
@@ -70,8 +70,8 @@ func (a *articleRepo) GetAll() ([]*models.Article, error) {
 	return result, nil
 }
 
-func (a *articleRepo) Delele(articleId string) error {
-	err := a.db.Table(a.getTable()).Delete("article_id = ?", articleId).Error
+func (a *articleRepo) Delete(articleId string) error {
+	err := a.db.Table(a.getTable()).Where("article_id = ?", articleId).Delete(&models.Article{}).Error
 	if err != nil {
 		return err
 	}

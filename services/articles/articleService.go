@@ -4,14 +4,15 @@ import (
 	"inventory-management/dtos"
 	"inventory-management/models"
 	"inventory-management/repository"
+	"log"
 )
 
-type IArticleService interface {
+type ArticleService interface {
 	CreateArticle(req *dtos.Article) error
 	UpdateArticle(id string, req *dtos.Article) error
 	GetArticle(articleId string) (*dtos.Article, error)
 	ListArticle() ([]*dtos.Article, error)
-	DeleleArticle(articleId string) error
+	DeleteArticle(articleId string) error
 	UpdateArticleStock(articleId string, req *dtos.UpdateStock) error
 }
 
@@ -19,7 +20,7 @@ type articleService struct {
 	articleRepo repository.ArticleRepo
 }
 
-func NewArticleService(articleRepo repository.ArticleRepo) IArticleService {
+func NewArticleService(articleRepo repository.ArticleRepo) ArticleService {
 	return &articleService{
 		articleRepo: articleRepo,
 	}
@@ -50,6 +51,7 @@ func (a *articleService) UpdateArticle(id string, req *dtos.Article) error {
 func (a *articleService) GetArticle(articleId string) (*dtos.Article, error) {
 	article, err := a.articleRepo.Get(articleId)
 	if err != nil {
+		log.Println("unable to get article")
 		return nil, err
 	}
 
@@ -67,8 +69,8 @@ func (a *articleService) ListArticle() ([]*dtos.Article, error) {
 	return ArticleModelToDtos(articles...), nil
 }
 
-func (a *articleService) DeleleArticle(articleId string) error {
-	err := a.articleRepo.Delele(articleId)
+func (a *articleService) DeleteArticle(articleId string) error {
+	err := a.articleRepo.Delete(articleId)
 	if err != nil {
 		return err
 	}

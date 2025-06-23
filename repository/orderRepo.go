@@ -57,7 +57,7 @@ func (o *orderRepo) Get(orderId string) (*models.Order, error) {
 }
 
 func (o *orderRepo) Delete(orderId string) error {
-	err := o.db.Table(o.getTable()).Delete("order_id = ?", orderId).Error
+	err := o.db.Table(o.getTable()).Where("order_id = ?", orderId).Delete(&models.Order{}).Error
 	if err != nil {
 		return err
 	}

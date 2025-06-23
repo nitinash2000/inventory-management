@@ -11,31 +11,31 @@ import (
 	gomock "github.com/golang/mock/gomock"
 )
 
-// MockIArticleService is a mock of IArticleService interface.
-type MockIArticleService struct {
+// MockArticleService is a mock of ArticleService interface.
+type MockArticleService struct {
 	ctrl     *gomock.Controller
-	recorder *MockIArticleServiceMockRecorder
+	recorder *MockArticleServiceMockRecorder
 }
 
-// MockIArticleServiceMockRecorder is the mock recorder for MockIArticleService.
-type MockIArticleServiceMockRecorder struct {
-	mock *MockIArticleService
+// MockArticleServiceMockRecorder is the mock recorder for MockArticleService.
+type MockArticleServiceMockRecorder struct {
+	mock *MockArticleService
 }
 
-// NewMockIArticleService creates a new mock instance.
-func NewMockIArticleService(ctrl *gomock.Controller) *MockIArticleService {
-	mock := &MockIArticleService{ctrl: ctrl}
-	mock.recorder = &MockIArticleServiceMockRecorder{mock}
+// NewMockArticleService creates a new mock instance.
+func NewMockArticleService(ctrl *gomock.Controller) *MockArticleService {
+	mock := &MockArticleService{ctrl: ctrl}
+	mock.recorder = &MockArticleServiceMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockIArticleService) EXPECT() *MockIArticleServiceMockRecorder {
+func (m *MockArticleService) EXPECT() *MockArticleServiceMockRecorder {
 	return m.recorder
 }
 
 // CreateArticle mocks base method.
-func (m *MockIArticleService) CreateArticle(req *dtos.Article) error {
+func (m *MockArticleService) CreateArticle(req *dtos.Article) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CreateArticle", req)
 	ret0, _ := ret[0].(error)
@@ -43,27 +43,27 @@ func (m *MockIArticleService) CreateArticle(req *dtos.Article) error {
 }
 
 // CreateArticle indicates an expected call of CreateArticle.
-func (mr *MockIArticleServiceMockRecorder) CreateArticle(req interface{}) *gomock.Call {
+func (mr *MockArticleServiceMockRecorder) CreateArticle(req interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateArticle", reflect.TypeOf((*MockIArticleService)(nil).CreateArticle), req)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateArticle", reflect.TypeOf((*MockArticleService)(nil).CreateArticle), req)
 }
 
-// DeleleArticle mocks base method.
-func (m *MockIArticleService) DeleleArticle(articleId string) error {
+// DeleteArticle mocks base method.
+func (m *MockArticleService) DeleteArticle(articleId string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeleleArticle", articleId)
+	ret := m.ctrl.Call(m, "DeleteArticle", articleId)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// DeleleArticle indicates an expected call of DeleleArticle.
-func (mr *MockIArticleServiceMockRecorder) DeleleArticle(articleId interface{}) *gomock.Call {
+// DeleteArticle indicates an expected call of DeleteArticle.
+func (mr *MockArticleServiceMockRecorder) DeleteArticle(articleId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleleArticle", reflect.TypeOf((*MockIArticleService)(nil).DeleleArticle), articleId)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteArticle", reflect.TypeOf((*MockArticleService)(nil).DeleteArticle), articleId)
 }
 
 // GetArticle mocks base method.
-func (m *MockIArticleService) GetArticle(articleId string) (*dtos.Article, error) {
+func (m *MockArticleService) GetArticle(articleId string) (*dtos.Article, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "GetArticle", articleId)
 	ret0, _ := ret[0].(*dtos.Article)
@@ -72,13 +72,13 @@ func (m *MockIArticleService) GetArticle(articleId string) (*dtos.Article, error
 }
 
 // GetArticle indicates an expected call of GetArticle.
-func (mr *MockIArticleServiceMockRecorder) GetArticle(articleId interface{}) *gomock.Call {
+func (mr *MockArticleServiceMockRecorder) GetArticle(articleId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetArticle", reflect.TypeOf((*MockIArticleService)(nil).GetArticle), articleId)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetArticle", reflect.TypeOf((*MockArticleService)(nil).GetArticle), articleId)
 }
 
 // ListArticle mocks base method.
-func (m *MockIArticleService) ListArticle() ([]*dtos.Article, error) {
+func (m *MockArticleService) ListArticle() ([]*dtos.Article, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ListArticle")
 	ret0, _ := ret[0].([]*dtos.Article)
@@ -87,13 +87,13 @@ func (m *MockIArticleService) ListArticle() ([]*dtos.Article, error) {
 }
 
 // ListArticle indicates an expected call of ListArticle.
-func (mr *MockIArticleServiceMockRecorder) ListArticle() *gomock.Call {
+func (mr *MockArticleServiceMockRecorder) ListArticle() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListArticle", reflect.TypeOf((*MockIArticleService)(nil).ListArticle))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListArticle", reflect.TypeOf((*MockArticleService)(nil).ListArticle))
 }
 
 // UpdateArticle mocks base method.
-func (m *MockIArticleService) UpdateArticle(id string, req *dtos.Article) error {
+func (m *MockArticleService) UpdateArticle(id string, req *dtos.Article) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateArticle", id, req)
 	ret0, _ := ret[0].(error)
@@ -101,13 +101,13 @@ func (m *MockIArticleService) UpdateArticle(id string, req *dtos.Article) error 
 }
 
 // UpdateArticle indicates an expected call of UpdateArticle.
-func (mr *MockIArticleServiceMockRecorder) UpdateArticle(id, req interface{}) *gomock.Call {
+func (mr *MockArticleServiceMockRecorder) UpdateArticle(id, req interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateArticle", reflect.TypeOf((*MockIArticleService)(nil).UpdateArticle), id, req)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateArticle", reflect.TypeOf((*MockArticleService)(nil).UpdateArticle), id, req)
 }
 
 // UpdateArticleStock mocks base method.
-func (m *MockIArticleService) UpdateArticleStock(articleId string, req *dtos.UpdateStock) error {
+func (m *MockArticleService) UpdateArticleStock(articleId string, req *dtos.UpdateStock) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "UpdateArticleStock", articleId, req)
 	ret0, _ := ret[0].(error)
@@ -115,7 +115,7 @@ func (m *MockIArticleService) UpdateArticleStock(articleId string, req *dtos.Upd
 }
 
 // UpdateArticleStock indicates an expected call of UpdateArticleStock.
-func (mr *MockIArticleServiceMockRecorder) UpdateArticleStock(articleId, req interface{}) *gomock.Call {
+func (mr *MockArticleServiceMockRecorder) UpdateArticleStock(articleId, req interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateArticleStock", reflect.TypeOf((*MockIArticleService)(nil).UpdateArticleStock), articleId, req)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateArticleStock", reflect.TypeOf((*MockArticleService)(nil).UpdateArticleStock), articleId, req)
 }

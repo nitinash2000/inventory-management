@@ -48,18 +48,18 @@ func (mr *MockArticleRepoMockRecorder) Create(article interface{}) *gomock.Call 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Create", reflect.TypeOf((*MockArticleRepo)(nil).Create), article)
 }
 
-// Delele mocks base method.
-func (m *MockArticleRepo) Delele(articleId string) error {
+// Delete mocks base method.
+func (m *MockArticleRepo) Delete(articleId string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Delele", articleId)
+	ret := m.ctrl.Call(m, "Delete", articleId)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// Delele indicates an expected call of Delele.
-func (mr *MockArticleRepoMockRecorder) Delele(articleId interface{}) *gomock.Call {
+// Delete indicates an expected call of Delete.
+func (mr *MockArticleRepoMockRecorder) Delete(articleId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delele", reflect.TypeOf((*MockArticleRepo)(nil).Delele), articleId)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockArticleRepo)(nil).Delete), articleId)
 }
 
 // Get mocks base method.

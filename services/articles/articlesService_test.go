@@ -15,7 +15,7 @@ type articleServiceTestSuite struct {
 	suite.Suite
 	mockCtrl        *gomock.Controller
 	mockArticleRepo *mocks.MockArticleRepo
-	articleService  IArticleService
+	articleService  ArticleService
 }
 
 func TestArticleTestSuite(t *testing.T) {
@@ -95,9 +95,9 @@ func (suite *articleServiceTestSuite) TestUpdateArticle() {
 }
 
 func (suite *articleServiceTestSuite) TestDeleteArticle() {
-	suite.mockArticleRepo.EXPECT().Delele("123").Return(nil).Times(1)
+	suite.mockArticleRepo.EXPECT().Delete("123").Return(nil).Times(1)
 
-	err := suite.articleService.DeleleArticle("123")
+	err := suite.articleService.DeleteArticle("123")
 	assert.NoError(suite.T(), err)
 }
 

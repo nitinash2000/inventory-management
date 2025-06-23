@@ -9,10 +9,10 @@ import (
 )
 
 type articleHandler struct {
-	articleService articles.IArticleService
+	articleService articles.ArticleService
 }
 
-func NewArticleHandler(articleService articles.IArticleService) *articleHandler {
+func NewArticleHandler(articleService articles.ArticleService) *articleHandler {
 	return &articleHandler{
 		articleService: articleService,
 	}
@@ -51,7 +51,7 @@ func (a *articleHandler) CreateArticle(ctx *gin.Context) {
 func (a *articleHandler) DeleteArticle(ctx *gin.Context) {
 	id := ctx.Param("id")
 
-	err := a.articleService.DeleleArticle(id)
+	err := a.articleService.DeleteArticle(id)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err.Error())
 		return

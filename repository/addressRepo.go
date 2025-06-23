@@ -57,7 +57,7 @@ func (o *addressRepo) Get(addressId string) (*models.Address, error) {
 }
 
 func (o *addressRepo) Delete(addressId string) error {
-	err := o.db.Table(o.getTable()).Delete("address_id = ?", addressId).Error
+	err := o.db.Table(o.getTable()).Where("address_id = ?", addressId).Delete(&models.Address{}).Error
 	if err != nil {
 		return err
 	}

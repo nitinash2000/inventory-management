@@ -18,7 +18,7 @@ import (
 type articleHandlerTestSuite struct {
 	suite.Suite
 	mockCtrl           *gomock.Controller
-	mockArticleService *mocks.MockIArticleService
+	mockArticleService *mocks.MockArticleService
 	mockOrderService   *mocks.MockOrderService
 	articleHandler     *articleHandler
 }
@@ -30,7 +30,7 @@ func TestArticleHandlerTestSuite(t *testing.T) {
 func (suite *articleHandlerTestSuite) SetupTest() {
 	suite.mockCtrl = gomock.NewController(suite.T())
 
-	suite.mockArticleService = mocks.NewMockIArticleService(suite.mockCtrl)
+	suite.mockArticleService = mocks.NewMockArticleService(suite.mockCtrl)
 
 	suite.articleHandler = NewArticleHandler(suite.mockArticleService)
 }
@@ -89,7 +89,7 @@ func (suite *articleHandlerTestSuite) TestCreateArticle() {
 }
 
 func (suite *articleHandlerTestSuite) TestDeleteArticle() {
-	suite.mockArticleService.EXPECT().DeleleArticle("123").Return(nil).Times(1)
+	suite.mockArticleService.EXPECT().DeleteArticle("123").Return(nil).Times(1)
 
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
