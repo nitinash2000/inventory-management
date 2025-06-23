@@ -12,7 +12,7 @@ import (
 func ArticleRoutes(r *gin.Engine, db *gorm.DB) {
 	articleRepo := repository.NewArticleRepo(db)
 	articleService := articles.NewArticleService(articleRepo)
-	articleHandler := handlers.NewHandler(articleService)
+	articleHandler := handlers.NewArticleHandler(articleService)
 
 	r.GET("/articles/:id", articleHandler.GetArticle)
 	r.POST("/articles", articleHandler.CreateArticle)

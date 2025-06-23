@@ -7,4 +7,6 @@ import (
 
 func Router(r *gin.Engine, db *gorm.DB) {
 	ArticleRoutes(r, db)
+	OrderRoutes(r, db)
+	UserRoutes(r, db)
 }

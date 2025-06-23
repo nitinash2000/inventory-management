@@ -19,7 +19,8 @@ type articleHandlerTestSuite struct {
 	suite.Suite
 	mockCtrl           *gomock.Controller
 	mockArticleService *mocks.MockIArticleService
-	handler            *Handler
+	mockOrderService   *mocks.MockOrderService
+	articleHandler     *articleHandler
 }
 
 func TestArticleHandlerTestSuite(t *testing.T) {
@@ -31,7 +32,11 @@ func (suite *articleHandlerTestSuite) SetupTest() {
 
 	suite.mockArticleService = mocks.NewMockIArticleService(suite.mockCtrl)
 
-	suite.handler = NewHandler(suite.mockArticleService)
+	suite.articleHandler = NewArticleHandler(suite.mockArticleService)
+}
+
+func (suite *articleHandlerTestSuite) TearDownTest() {
+	suite.mockCtrl.Finish()
 }
 
 func (suite *articleHandlerTestSuite) TestGetArticle() {
@@ -51,7 +56,7 @@ func (suite *articleHandlerTestSuite) TestGetArticle() {
 	}
 	c.Request = httptest.NewRequest(http.MethodGet, "/articles/123", nil)
 
-	suite.handler.GetArticle(c)
+	suite.articleHandler.GetArticle(c)
 
 	var result *dtos.Article
 
@@ -79,7 +84,7 @@ func (suite *articleHandlerTestSuite) TestCreateArticle() {
 
 	suite.mockArticleService.EXPECT().CreateArticle(req).Return(nil).Times(1)
 
-	suite.handler.CreateArticle(c)
+	suite.articleHandler.CreateArticle(c)
 	assert.Equal(suite.T(), http.StatusOK, w.Code)
 }
 
@@ -93,7 +98,7 @@ func (suite *articleHandlerTestSuite) TestDeleteArticle() {
 	}
 	c.Request = httptest.NewRequest(http.MethodDelete, "/articles/123", nil)
 
-	suite.handler.DeleteArticle(c)
+	suite.articleHandler.DeleteArticle(c)
 	assert.Equal(suite.T(), http.StatusOK, w.Code)
 }
 
@@ -117,7 +122,7 @@ func (suite *articleHandlerTestSuite) TestUpdateArticle() {
 
 	suite.mockArticleService.EXPECT().UpdateArticle("123", req).Return(nil).Times(1)
 
-	suite.handler.UpdateArticle(c)
+	suite.articleHandler.UpdateArticle(c)
 	assert.Equal(suite.T(), http.StatusOK, w.Code)
 }
 
@@ -143,7 +148,7 @@ func (suite *articleHandlerTestSuite) TestListArticles() {
 	c, _ := gin.CreateTestContext(w)
 	c.Request = httptest.NewRequest(http.MethodGet, "/articles-list", nil)
 
-	suite.handler.ListArticles(c)
+	suite.articleHandler.ListArticles(c)
 	assert.Equal(suite.T(), http.StatusOK, w.Code)
 }
 
@@ -164,6 +169,6 @@ func (suite *articleHandlerTestSuite) TestUpdateArticleStock() {
 
 	suite.mockArticleService.EXPECT().UpdateArticleStock("123", req).Return(nil).Times(1)
 
-	suite.handler.UpdateArticleStock(c)
+	suite.articleHandler.UpdateArticleStock(c)
 	assert.Equal(suite.T(), http.StatusOK, w.Code)
 }
