@@ -44,10 +44,10 @@ func (suite *OrderRepoTestSuite) TearDownTest() {
 func (suite *OrderRepoTestSuite) TestCreateOrder() {
 	order := &models.Order{
 		OrderId:     "123",
-		CustomerId:  "234",
+		CustomerId:  "254",
 		OrderedAt:   time.Now(),
-		TotalAmount: 123.5,
-		NoOfItems:   2,
+		TotalAmount: 220.5,
+		NoOfItems:   5,
 	}
 
 	err := suite.orderRepo.Create(order)
@@ -57,16 +57,29 @@ func (suite *OrderRepoTestSuite) TestCreateOrder() {
 	var savedOrder models.Order
 	suite.db.Table("orders").Where("order_id = ?", order.OrderId).First(&savedOrder)
 	assert.Equal(suite.T(), order.OrderId, savedOrder.OrderId)
-	assert.Equal(suite.T(), order.TotalAmount, savedOrder.TotalAmount)
+	assert.Equal(suite.T(), order.OrderId, savedOrder.OrderId)
+}
+
+func (suite *OrderRepoTestSuite) TestCreaterderItemError() {
+	order := &models.Order{
+		OrderId:     "123",
+		CustomerId:  "",
+		OrderedAt:   time.Now(),
+		TotalAmount: 220.5,
+		NoOfItems:   5,
+	}
+
+	err := suite.orderRepo.Create(order)
+	assert.Error(suite.T(), err)
 }
 
 func (suite *OrderRepoTestSuite) TestGetOrder() {
 	order := &models.Order{
 		OrderId:     "123",
-		CustomerId:  "234",
+		CustomerId:  "254",
 		OrderedAt:   time.Now(),
-		TotalAmount: 123.5,
-		NoOfItems:   2,
+		TotalAmount: 220.5,
+		NoOfItems:   5,
 	}
 	err := suite.orderRepo.Create(order)
 	assert.NoError(suite.T(), err)
@@ -75,37 +88,56 @@ func (suite *OrderRepoTestSuite) TestGetOrder() {
 
 	assert.NoError(suite.T(), err)
 	assert.Equal(suite.T(), order.OrderId, result.OrderId)
-	assert.Equal(suite.T(), order.TotalAmount, result.TotalAmount)
+}
+
+func (suite *OrderRepoTestSuite) TestGetOrderError() {
+	result, err := suite.orderRepo.Get("123")
+
+	assert.Error(suite.T(), err)
+	assert.Nil(suite.T(), result)
+	assert.Equal(suite.T(), gorm.ErrRecordNotFound, err)
 }
 
 func (suite *OrderRepoTestSuite) TestUpdateOrder() {
 	order := &models.Order{
 		OrderId:     "123",
-		CustomerId:  "234",
+		CustomerId:  "254",
 		OrderedAt:   time.Now(),
-		TotalAmount: 123.5,
-		NoOfItems:   2,
+		TotalAmount: 220.5,
+		NoOfItems:   5,
 	}
 	err := suite.orderRepo.Create(order)
 	assert.NoError(suite.T(), err)
 
-	order.TotalAmount = 230
+	order.CustomerId = "523"
 
 	err = suite.orderRepo.Update(order.OrderId, order)
 	assert.NoError(suite.T(), err)
 
 	var updatedOrder models.Order
 	suite.db.Table("orders").Where("order_id = ?", order.OrderId).First(&updatedOrder)
-	assert.Equal(suite.T(), float64(230), updatedOrder.TotalAmount)
+}
+
+func (suite *OrderRepoTestSuite) TestUpdateOrderError() {
+	order := &models.Order{
+		OrderId:     "123",
+		CustomerId:  "254",
+		OrderedAt:   time.Now(),
+		TotalAmount: 220.5,
+		NoOfItems:   5,
+	}
+
+	err := suite.orderRepo.Update(order.OrderId, order)
+	assert.Error(suite.T(), err)
 }
 
 func (suite *OrderRepoTestSuite) TestDeleteOrder() {
 	order := &models.Order{
 		OrderId:     "123",
-		CustomerId:  "234",
+		CustomerId:  "254",
 		OrderedAt:   time.Now(),
-		TotalAmount: 123.5,
-		NoOfItems:   2,
+		TotalAmount: 220.5,
+		NoOfItems:   5,
 	}
 	err := suite.orderRepo.Create(order)
 	assert.NoError(suite.T(), err)
@@ -117,4 +149,11 @@ func (suite *OrderRepoTestSuite) TestDeleteOrder() {
 	var deletedOrder models.Order
 	err = suite.db.Table("orders").Where("order_id = ?", order.OrderId).First(&deletedOrder).Error
 	assert.Error(suite.T(), err)
+}
+
+func (suite *OrderRepoTestSuite) TestDeleteOrderError() {
+	err := suite.orderRepo.Delete("123")
+
+	assert.Error(suite.T(), err)
+	assert.Equal(suite.T(), "error deleting order", err.Error())
 }

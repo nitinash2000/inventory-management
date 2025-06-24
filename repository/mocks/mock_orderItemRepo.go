@@ -66,6 +66,20 @@ func (mr *MockOrderItemRepoMockRecorder) Delete(orderItemId interface{}) *gomock
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockOrderItemRepo)(nil).Delete), orderItemId)
 }
 
+// DeleteAll mocks base method.
+func (m *MockOrderItemRepo) DeleteAll(orderItemIds []string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteAll", orderItemIds)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteAll indicates an expected call of DeleteAll.
+func (mr *MockOrderItemRepoMockRecorder) DeleteAll(orderItemIds interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteAll", reflect.TypeOf((*MockOrderItemRepo)(nil).DeleteAll), orderItemIds)
+}
+
 // Get mocks base method.
 func (m *MockOrderItemRepo) Get(orderItemId string) (*models.OrderItem, error) {
 	m.ctrl.T.Helper()
@@ -108,4 +122,22 @@ func (m *MockOrderItemRepo) Update(orderItemId string, orderItem *models.OrderIt
 func (mr *MockOrderItemRepoMockRecorder) Update(orderItemId, orderItem interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockOrderItemRepo)(nil).Update), orderItemId, orderItem)
+}
+
+// Upsert mocks base method.
+func (m *MockOrderItemRepo) Upsert(orderItems ...*models.OrderItem) error {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{}
+	for _, a := range orderItems {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "Upsert", varargs...)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Upsert indicates an expected call of Upsert.
+func (mr *MockOrderItemRepoMockRecorder) Upsert(orderItems ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Upsert", reflect.TypeOf((*MockOrderItemRepo)(nil).Upsert), orderItems...)
 }

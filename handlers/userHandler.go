@@ -51,7 +51,7 @@ func (c *userHandler) CreateUser(ctx *gin.Context) {
 func (c *userHandler) DeleteUser(ctx *gin.Context) {
 	id := ctx.Param("id")
 
-	err := c.userService.DeleleUser(id)
+	err := c.userService.DeleteUser(id)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err.Error())
 		return

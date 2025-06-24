@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"errors"
 	"inventory-management/models"
 
 	"gorm.io/gorm"
@@ -37,9 +38,9 @@ func (o *addressRepo) Upsert(address *models.Address) error {
 }
 
 func (o *addressRepo) Update(addressId string, address *models.Address) error {
-	err := o.db.Table(o.getTable()).Where("address_id = ?", addressId).UpdateColumns(address).Error
-	if err != nil {
-		return err
+	tx := o.db.Table(o.getTable()).Where("address_id = ?", addressId).UpdateColumns(address)
+	if tx.Error != nil || tx.RowsAffected == 0 {
+		return errors.New("error updating address")
 	}
 
 	return nil
@@ -57,9 +58,9 @@ func (o *addressRepo) Get(addressId string) (*models.Address, error) {
 }
 
 func (o *addressRepo) Delete(addressId string) error {
-	err := o.db.Table(o.getTable()).Where("address_id = ?", addressId).Delete(&models.Address{}).Error
-	if err != nil {
-		return err
+	tx := o.db.Table(o.getTable()).Where("address_id = ?", addressId).Delete(&models.Address{})
+	if tx.Error != nil || tx.RowsAffected == 0 {
+		return errors.New("error deleting address")
 	}
 
 	return nil

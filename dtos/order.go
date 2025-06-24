@@ -15,5 +15,5 @@ type OrderItems struct {
 	OrderItemId string `json:"order_item_id"`
 	OrderId     string `json:"order_id"`
 	ArticleId   string `json:"article_id"`
-	Quantity    string `json:"quantity"`
+	Quantity    int    `json:"quantity"`
 }

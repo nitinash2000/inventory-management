@@ -51,7 +51,7 @@ func (o *orderHandler) CreateOrder(ctx *gin.Context) {
 func (o *orderHandler) DeleteOrder(ctx *gin.Context) {
 	id := ctx.Param("id")
 
-	err := o.orderService.DeleleOrder(id)
+	err := o.orderService.DeleteOrder(id)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err.Error())
 		return

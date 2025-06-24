@@ -12,7 +12,7 @@ type UserService interface {
 	CreateUser(req *dtos.User) error
 	UpdateUser(id string, req *dtos.User) error
 	GetUser(userId string) (*dtos.User, error)
-	DeleleUser(userId string) error
+	DeleteUser(userId string) error
 }
 
 type userService struct {
@@ -75,7 +75,7 @@ func (o *userService) GetUser(userId string) (*dtos.User, error) {
 	return result, nil
 }
 
-func (o *userService) DeleleUser(userId string) error {
+func (o *userService) DeleteUser(userId string) error {
 	err := o.userRepo.Delete(userId)
 	if err != nil {
 		return err
@@ -129,7 +129,7 @@ func UserDtosToModel(m *dtos.User) (*models.User, *models.Address) {
 		Line1:     m.Address.Line1,
 		Line2:     m.Address.Line2,
 		City:      m.Address.City,
-		State:     m.Address.City,
+		State:     m.Address.State,
 		Country:   m.Address.Country,
 		ZipCode:   m.Address.ZipCode,
 	}

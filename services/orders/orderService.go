@@ -14,7 +14,7 @@ type OrderService interface {
 	CreateOrder(req *dtos.Order) error
 	UpdateOrder(id string, req *dtos.Order) error
 	GetOrder(orderId string) (*dtos.Order, error)
-	DeleleOrder(orderId string) error
+	DeleteOrder(orderId string) error
 }
 
 type orderService struct {
@@ -52,12 +52,36 @@ func (o *orderService) UpdateOrder(id string, req *dtos.Order) error {
 
 	orderModel, itemsModel := OrderDtosToModel(req)
 
-	err := o.orderRepo.Create(orderModel)
+	err := o.orderRepo.Update(id, orderModel)
 	if err != nil {
 		return err
 	}
 
-	err = o.orderItemRepo.Create(itemsModel...)
+	orderItems, err := o.orderItemRepo.GetByOrder(id)
+	if err != nil {
+		return err
+	}
+
+	itemsMap := make(map[string]struct{})
+	for _, v := range itemsModel {
+		itemsMap[v.OrderItemId] = struct{}{}
+	}
+
+	var deletedItems []string
+	for _, v := range orderItems {
+		if _, exists := itemsMap[v.OrderItemId]; !exists {
+			deletedItems = append(deletedItems, v.OrderItemId)
+		}
+	}
+
+	if len(deletedItems) > 0 {
+		err := o.orderItemRepo.DeleteAll(deletedItems)
+		if err != nil {
+			return err
+		}
+	}
+
+	err = o.orderItemRepo.Upsert(itemsModel...)
 	if err != nil {
 		return err
 	}
@@ -81,7 +105,7 @@ func (o *orderService) GetOrder(orderId string) (*dtos.Order, error) {
 	return result, nil
 }
 
-func (o *orderService) DeleleOrder(orderId string) error {
+func (o *orderService) DeleteOrder(orderId string) error {
 	err := o.orderRepo.Delete(orderId)
 	if err != nil {
 		return err

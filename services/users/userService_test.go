@@ -1,10 +1,15 @@
 package users
 
 import (
+	"errors"
+	"inventory-management/constants"
+	"inventory-management/dtos"
+	"inventory-management/models"
 	"inventory-management/repository/mocks"
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -24,126 +29,317 @@ func (suite *userServiceTestSuite) SetupTest() {
 	suite.mockCtrl = gomock.NewController(suite.T())
 
 	suite.mockUserRepo = mocks.NewMockUserRepo(suite.mockCtrl)
+	suite.mockAddressRepo = mocks.NewMockAddressRepo(suite.mockCtrl)
 
 	suite.userService = NewUserService(suite.mockUserRepo, suite.mockAddressRepo)
 }
 
-// func (suite *userServiceTestSuite) TestCreateUser() {
-// 	req := &dtos.User{
-// 		UserId:   "123",
-// 		UserName: "Test User",
-// 		Price:    100,
-// 		Stock:    50,
-// 	}
+func (suite *userServiceTestSuite) TestCreateUser() {
+	req := &dtos.User{
+		Id:     "123",
+		Name:   "John",
+		Email:  "john@abc.com",
+		Mobile: "12345",
+		Address: dtos.Address{
+			AddressId: "5",
+			Line1:     "12",
+			Line2:     "park street",
+			City:      "chennai",
+			State:     "tn",
+			Country:   "in",
+			ZipCode:   "600001",
+		},
+		Role: constants.RoleCustomer,
+	}
 
-// 	model := &models.User{
-// 		UserId:   "123",
-// 		UserName: "Test User",
-// 		Price:    100,
-// 		Stock:    50,
-// 	}
+	userModel := &models.User{
+		Id:        "123",
+		Name:      "John",
+		Email:     "john@abc.com",
+		Mobile:    "12345",
+		AddressId: "5",
+		Role:      constants.RoleCustomer,
+	}
 
-// 	suite.mockUserRepo.EXPECT().Create(model).Return(nil).Times(1)
+	addressModel := &models.Address{
+		AddressId: "5",
+		Line1:     "12",
+		Line2:     "park street",
+		City:      "chennai",
+		State:     "tn",
+		Country:   "in",
+		ZipCode:   "600001",
+	}
 
-// 	err := suite.userService.CreateUser(req)
-// 	assert.NoError(suite.T(), err)
-// }
+	suite.mockUserRepo.EXPECT().Upsert(userModel).Return(nil).Times(1)
+	suite.mockAddressRepo.EXPECT().Upsert(addressModel).Return(nil).Times(1)
 
-// func (suite *userServiceTestSuite) TestGetUser() {
-// 	expected := &dtos.User{
-// 		UserId:   "123",
-// 		UserName: "Test User",
-// 		Price:    100,
-// 		Stock:    50,
-// 	}
+	err := suite.userService.CreateUser(req)
+	assert.NoError(suite.T(), err)
+}
 
-// 	mockUser := &models.User{
-// 		UserId:   "123",
-// 		UserName: "Test User",
-// 		Price:    100,
-// 		Stock:    50,
-// 	}
+func (suite *userServiceTestSuite) TestCreateUserRepoError() {
+	req := &dtos.User{
+		Id:     "123",
+		Name:   "John",
+		Email:  "john@abc.com",
+		Mobile: "12345",
+		Address: dtos.Address{
+			AddressId: "5",
+			Line1:     "12",
+			Line2:     "park street",
+			City:      "chennai",
+			State:     "tn",
+			Country:   "in",
+			ZipCode:   "600001",
+		},
+		Role: constants.RoleCustomer,
+	}
 
-// 	suite.mockUserRepo.EXPECT().Get("123").Return(mockUser, nil).Times(1)
+	userModel := &models.User{
+		Id:        "123",
+		Name:      "John",
+		Email:     "john@abc.com",
+		Mobile:    "12345",
+		AddressId: "5",
+		Role:      constants.RoleCustomer,
+	}
 
-// 	result, err := suite.userService.GetUser("123")
-// 	assert.NoError(suite.T(), err)
-// 	assert.Equal(suite.T(), expected, result)
-// }
+	// addressModel := []*models.Address{
+	// 	{
+	// 		AddressId: "5",
+	// 		Line1:     "12",
+	// 		Line2:     "park street",
+	// 		City:      "chennai",
+	// 		State:     "tn",
+	// 		Country:   "in",
+	// 		ZipCode:   "600001",
+	// 	},
+	// }
 
-// func (suite *userServiceTestSuite) TestUpdateUser() {
-// 	req := &dtos.User{
-// 		UserId:   "123",
-// 		UserName: "Test User",
-// 		Price:    100,
-// 		Stock:    50,
-// 	}
+	suite.mockUserRepo.EXPECT().Upsert(userModel).Return(errors.New("repo error")).Times(1)
 
-// 	model := &models.User{
-// 		UserId:   "123",
-// 		UserName: "Test User",
-// 		Price:    100,
-// 		Stock:    50,
-// 	}
+	err := suite.userService.CreateUser(req)
+	assert.Error(suite.T(), err)
+	assert.Equal(suite.T(), "repo error", err.Error())
+}
 
-// 	suite.mockUserRepo.EXPECT().Update("123", model).Return(nil).Times(1)
+func (suite *userServiceTestSuite) TestGetUser() {
+	expected := &dtos.User{
+		Id:     "123",
+		Name:   "John",
+		Email:  "john@abc.com",
+		Mobile: "12345",
+		Address: dtos.Address{
+			AddressId: "5",
+			Line1:     "12",
+			Line2:     "park street",
+			City:      "chennai",
+			State:     "tn",
+			Country:   "in",
+			ZipCode:   "600001",
+		},
+		Role: constants.RoleCustomer,
+	}
 
-// 	err := suite.userService.UpdateUser("123", req)
-// 	assert.NoError(suite.T(), err)
-// }
+	userModel := &models.User{
+		Id:        "123",
+		Name:      "John",
+		Email:     "john@abc.com",
+		Mobile:    "12345",
+		AddressId: "5",
+		Role:      constants.RoleCustomer,
+	}
 
-// func (suite *userServiceTestSuite) TestDeleteUser() {
-// 	suite.mockUserRepo.EXPECT().Delele("123").Return(nil).Times(1)
+	addressModel := &models.Address{
+		AddressId: "5",
+		Line1:     "12",
+		Line2:     "park street",
+		City:      "chennai",
+		State:     "tn",
+		Country:   "in",
+		ZipCode:   "600001",
+	}
 
-// 	err := suite.userService.DeleleUser("123")
-// 	assert.NoError(suite.T(), err)
-// }
+	suite.mockUserRepo.EXPECT().Get("123").Return(userModel, nil).Times(1)
+	suite.mockAddressRepo.EXPECT().Get("5").Return(addressModel, nil).Times(1)
 
-// func (suite *userServiceTestSuite) TestListUser() {
-// 	expectedDto := []*dtos.User{
-// 		{
-// 			UserId:   "123",
-// 			UserName: "Test 1",
-// 			Price:    100,
-// 			Stock:    50,
-// 		},
-// 		{
-// 			UserId:   "321",
-// 			UserName: "Test 2",
-// 			Price:    200,
-// 			Stock:    20,
-// 		},
-// 	}
+	result, err := suite.userService.GetUser("123")
+	assert.NoError(suite.T(), err)
+	assert.Equal(suite.T(), expected, result)
+}
 
-// 	mockModel := []*models.User{
-// 		{
-// 			UserId:   "123",
-// 			UserName: "Test 1",
-// 			Price:    100,
-// 			Stock:    50,
-// 		},
-// 		{
-// 			UserId:   "321",
-// 			UserName: "Test 2",
-// 			Price:    200,
-// 			Stock:    20,
-// 		},
-// 	}
+func (suite *userServiceTestSuite) TestGetUserError() {
+	expectedError := constants.ErrorNotFound
 
-// 	suite.mockUserRepo.EXPECT().GetAll().Return(mockModel, nil).Times(1)
+	suite.mockUserRepo.EXPECT().Get("123").Return(nil, expectedError).Times(1)
 
-// 	result, err := suite.userService.ListUser()
-// 	assert.NoError(suite.T(), err)
-// 	assert.Equal(suite.T(), expectedDto, result)
-// }
+	result, err := suite.userService.GetUser("123")
 
-// func (suite *userServiceTestSuite) TestUpdateUserStock() {
-// 	req := &dtos.UpdateStock{
-// 		NewStock: 50,
-// 	}
+	assert.Nil(suite.T(), result)
+	assert.Error(suite.T(), err)
+	assert.Equal(suite.T(), expectedError, err)
+}
 
-// 	suite.mockUserRepo.EXPECT().UpdateUserStock("123", int64(50)).Return(nil).Times(1)
+func (suite *userServiceTestSuite) TestUpdateUser() {
+	req := &dtos.User{
+		Id:     "123",
+		Name:   "John",
+		Email:  "john@abc.com",
+		Mobile: "12345",
+		Address: dtos.Address{
+			AddressId: "5",
+			Line1:     "12",
+			Line2:     "park street",
+			City:      "chennai",
+			State:     "tn",
+			Country:   "in",
+			ZipCode:   "600001",
+		},
+		Role: constants.RoleCustomer,
+	}
 
-// 	err := suite.userService.UpdateUserStock("123", req)
-// 	assert.NoError(suite.T(), err)
-// }
+	userModel := &models.User{
+		Id:        "123",
+		Name:      "John",
+		Email:     "john@abc.com",
+		Mobile:    "12345",
+		AddressId: "5",
+		Role:      constants.RoleCustomer,
+	}
+
+	addressModel := &models.Address{
+		AddressId: "5",
+		Line1:     "12",
+		Line2:     "park street",
+		City:      "chennai",
+		State:     "tn",
+		Country:   "in",
+		ZipCode:   "600001",
+	}
+
+	suite.mockUserRepo.EXPECT().Upsert(userModel).Return(nil).Times(1)
+	suite.mockAddressRepo.EXPECT().Upsert(addressModel).Return(nil).Times(1)
+
+	err := suite.userService.UpdateUser("123", req)
+	assert.NoError(suite.T(), err)
+}
+
+func (suite *userServiceTestSuite) TestUpdateUserError() {
+	req := &dtos.User{
+		Id:     "123",
+		Name:   "John",
+		Email:  "john@abc.com",
+		Mobile: "12345",
+		Address: dtos.Address{
+			AddressId: "5",
+			Line1:     "12",
+			Line2:     "park street",
+			City:      "chennai",
+			State:     "tn",
+			Country:   "in",
+			ZipCode:   "600001",
+		},
+		Role: constants.RoleCustomer,
+	}
+
+	userModel := &models.User{
+		Id:        "123",
+		Name:      "John",
+		Email:     "john@abc.com",
+		Mobile:    "12345",
+		AddressId: "5",
+		Role:      constants.RoleCustomer,
+	}
+
+	suite.mockUserRepo.EXPECT().Upsert(userModel).Return(constants.ErrorNotFound).Times(1)
+
+	err := suite.userService.UpdateUser("123", req)
+	assert.Error(suite.T(), err)
+}
+
+func (suite *userServiceTestSuite) TestDeleteUser() {
+	suite.mockUserRepo.EXPECT().Delete("123").Return(nil).Times(1)
+
+	err := suite.userService.DeleteUser("123")
+	assert.NoError(suite.T(), err)
+}
+
+func (suite *userServiceTestSuite) TestDeleteUserError() {
+	suite.mockUserRepo.EXPECT().Delete("123").Return(constants.ErrorNotFound).Times(1)
+
+	err := suite.userService.DeleteUser("123")
+	assert.Error(suite.T(), err)
+}
+
+func (suite *userServiceTestSuite) TestUserDtosToModel() {
+	req := &dtos.User{
+		Id:     "123",
+		Name:   "John",
+		Email:  "john@abc.com",
+		Mobile: "12345",
+		Address: dtos.Address{
+			AddressId: "5",
+			Line1:     "12",
+			Line2:     "park street",
+			City:      "chennai",
+			State:     "tn",
+			Country:   "in",
+			ZipCode:   "600001",
+		},
+		Role: constants.RoleCustomer,
+	}
+
+	expected := &models.User{
+		Id:        "123",
+		Name:      "John",
+		Email:     "john@abc.com",
+		Mobile:    "12345",
+		AddressId: "5",
+		Role:      constants.RoleCustomer,
+	}
+
+	result, _ := UserDtosToModel(req)
+	assert.Equal(suite.T(), expected, result)
+}
+
+func (suite *userServiceTestSuite) TestUserModelToDtos() {
+	userModel := &models.User{
+		Id:        "123",
+		Name:      "John",
+		Email:     "john@abc.com",
+		Mobile:    "12345",
+		AddressId: "5",
+		Role:      constants.RoleCustomer,
+	}
+
+	addressModel := &models.Address{
+		AddressId: "5",
+		Line1:     "12",
+		Line2:     "park street",
+		City:      "chennai",
+		State:     "tn",
+		Country:   "in",
+		ZipCode:   "600001",
+	}
+
+	expected := &dtos.User{
+		Id:     "123",
+		Name:   "John",
+		Email:  "john@abc.com",
+		Mobile: "12345",
+		Address: dtos.Address{
+			AddressId: "5",
+			Line1:     "12",
+			Line2:     "park street",
+			City:      "chennai",
+			State:     "tn",
+			Country:   "in",
+			ZipCode:   "600001",
+		},
+		Role: constants.RoleCustomer,
+	}
+
+	result := UserModelToDtos(userModel, addressModel)
+	assert.Equal(suite.T(), expected, result)
+}

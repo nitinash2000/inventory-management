@@ -48,18 +48,18 @@ func (mr *MockOrderServiceMockRecorder) CreateOrder(req interface{}) *gomock.Cal
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateOrder", reflect.TypeOf((*MockOrderService)(nil).CreateOrder), req)
 }
 
-// DeleleOrder mocks base method.
-func (m *MockOrderService) DeleleOrder(orderId string) error {
+// DeleteOrder mocks base method.
+func (m *MockOrderService) DeleteOrder(orderId string) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DeleleOrder", orderId)
+	ret := m.ctrl.Call(m, "DeleteOrder", orderId)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// DeleleOrder indicates an expected call of DeleleOrder.
-func (mr *MockOrderServiceMockRecorder) DeleleOrder(orderId interface{}) *gomock.Call {
+// DeleteOrder indicates an expected call of DeleteOrder.
+func (mr *MockOrderServiceMockRecorder) DeleteOrder(orderId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleleOrder", reflect.TypeOf((*MockOrderService)(nil).DeleleOrder), orderId)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteOrder", reflect.TypeOf((*MockOrderService)(nil).DeleteOrder), orderId)
 }
 
 // GetOrder mocks base method.

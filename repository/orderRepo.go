@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"errors"
 	"inventory-management/models"
 
 	"gorm.io/gorm"
@@ -37,9 +38,9 @@ func (o *orderRepo) Create(order *models.Order) error {
 }
 
 func (o *orderRepo) Update(orderId string, order *models.Order) error {
-	err := o.db.Table(o.getTable()).Where("order_id = ?", orderId).UpdateColumns(order).Error
-	if err != nil {
-		return err
+	tx := o.db.Table(o.getTable()).Where("order_id = ?", orderId).UpdateColumns(order)
+	if tx.Error != nil || tx.RowsAffected == 0 {
+		return errors.New("error updating order")
 	}
 
 	return nil
@@ -57,9 +58,9 @@ func (o *orderRepo) Get(orderId string) (*models.Order, error) {
 }
 
 func (o *orderRepo) Delete(orderId string) error {
-	err := o.db.Table(o.getTable()).Where("order_id = ?", orderId).Delete(&models.Order{}).Error
-	if err != nil {
-		return err
+	tx := o.db.Table(o.getTable()).Where("order_id = ?", orderId).Delete(&models.Order{})
+	if tx.Error != nil || tx.RowsAffected == 0 {
+		return errors.New("error deleting order")
 	}
 
 	return nil

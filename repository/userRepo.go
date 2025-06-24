@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"errors"
 	"inventory-management/models"
 
 	"gorm.io/gorm"
@@ -37,9 +38,9 @@ func (o *userRepo) Upsert(user *models.User) error {
 }
 
 func (o *userRepo) Update(userId string, user *models.User) error {
-	err := o.db.Table(o.getTable()).Where("id = ?", userId).UpdateColumns(user).Error
-	if err != nil {
-		return err
+	tx := o.db.Table(o.getTable()).Where("id = ?", userId).UpdateColumns(user)
+	if tx.Error != nil || tx.RowsAffected == 0 {
+		return errors.New("error updating user")
 	}
 
 	return nil
@@ -57,9 +58,9 @@ func (o *userRepo) Get(userId string) (*models.User, error) {
 }
 
 func (o *userRepo) Delete(userId string) error {
-	err := o.db.Table(o.getTable()).Delete("id = ?", userId).Error
-	if err != nil {
-		return err
+	tx := o.db.Table(o.getTable()).Where("id = ?", userId).Delete(&models.User{})
+	if tx.Error != nil || tx.RowsAffected == 0 {
+		return errors.New("error deleting user")
 	}
 
 	return nil
