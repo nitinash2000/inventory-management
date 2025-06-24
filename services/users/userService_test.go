@@ -105,23 +105,56 @@ func (suite *userServiceTestSuite) TestCreateUserRepoError() {
 		Role:      constants.RoleCustomer,
 	}
 
-	// addressModel := []*models.Address{
-	// 	{
-	// 		AddressId: "5",
-	// 		Line1:     "12",
-	// 		Line2:     "park street",
-	// 		City:      "chennai",
-	// 		State:     "tn",
-	// 		Country:   "in",
-	// 		ZipCode:   "600001",
-	// 	},
-	// }
-
 	suite.mockUserRepo.EXPECT().Upsert(userModel).Return(errors.New("repo error")).Times(1)
 
 	err := suite.userService.CreateUser(req)
 	assert.Error(suite.T(), err)
 	assert.Equal(suite.T(), "repo error", err.Error())
+}
+
+func (suite *userServiceTestSuite) TestCreateUserAddressError() {
+	req := &dtos.User{
+		Id:     "123",
+		Name:   "John",
+		Email:  "john@abc.com",
+		Mobile: "12345",
+		Address: dtos.Address{
+			AddressId: "5",
+			Line1:     "12",
+			Line2:     "park street",
+			City:      "chennai",
+			State:     "tn",
+			Country:   "in",
+			ZipCode:   "600001",
+		},
+		Role: constants.RoleCustomer,
+	}
+
+	userModel := &models.User{
+		Id:        "123",
+		Name:      "John",
+		Email:     "john@abc.com",
+		Mobile:    "12345",
+		AddressId: "5",
+		Role:      constants.RoleCustomer,
+	}
+
+	addressModel := &models.Address{
+		AddressId: "5",
+		Line1:     "12",
+		Line2:     "park street",
+		City:      "chennai",
+		State:     "tn",
+		Country:   "in",
+		ZipCode:   "600001",
+	}
+
+	suite.mockUserRepo.EXPECT().Upsert(userModel).Return(nil).Times(1)
+	suite.mockAddressRepo.EXPECT().Upsert(addressModel).Return(errors.New("address repo error")).Times(1)
+
+	err := suite.userService.CreateUser(req)
+	assert.Error(suite.T(), err)
+	assert.Equal(suite.T(), "address repo error", err.Error())
 }
 
 func (suite *userServiceTestSuite) TestGetUser() {
@@ -173,6 +206,28 @@ func (suite *userServiceTestSuite) TestGetUserError() {
 	expectedError := constants.ErrorNotFound
 
 	suite.mockUserRepo.EXPECT().Get("123").Return(nil, expectedError).Times(1)
+
+	result, err := suite.userService.GetUser("123")
+
+	assert.Nil(suite.T(), result)
+	assert.Error(suite.T(), err)
+	assert.Equal(suite.T(), expectedError, err)
+}
+
+func (suite *userServiceTestSuite) TestGetUserAddressError() {
+	expectedError := constants.ErrorNotFound
+
+	userModel := &models.User{
+		Id:        "123",
+		Name:      "John",
+		Email:     "john@abc.com",
+		Mobile:    "12345",
+		AddressId: "5",
+		Role:      constants.RoleCustomer,
+	}
+
+	suite.mockUserRepo.EXPECT().Get("123").Return(userModel, nil).Times(1)
+	suite.mockAddressRepo.EXPECT().Get("5").Return(nil, expectedError).Times(1)
 
 	result, err := suite.userService.GetUser("123")
 
@@ -253,6 +308,50 @@ func (suite *userServiceTestSuite) TestUpdateUserError() {
 	}
 
 	suite.mockUserRepo.EXPECT().Upsert(userModel).Return(constants.ErrorNotFound).Times(1)
+
+	err := suite.userService.UpdateUser("123", req)
+	assert.Error(suite.T(), err)
+}
+
+func (suite *userServiceTestSuite) TestUpdateUserAddressError() {
+	req := &dtos.User{
+		Id:     "123",
+		Name:   "John",
+		Email:  "john@abc.com",
+		Mobile: "12345",
+		Address: dtos.Address{
+			AddressId: "5",
+			Line1:     "12",
+			Line2:     "park street",
+			City:      "chennai",
+			State:     "tn",
+			Country:   "in",
+			ZipCode:   "600001",
+		},
+		Role: constants.RoleCustomer,
+	}
+
+	userModel := &models.User{
+		Id:        "123",
+		Name:      "John",
+		Email:     "john@abc.com",
+		Mobile:    "12345",
+		AddressId: "5",
+		Role:      constants.RoleCustomer,
+	}
+
+	addressModel := &models.Address{
+		AddressId: "5",
+		Line1:     "12",
+		Line2:     "park street",
+		City:      "chennai",
+		State:     "tn",
+		Country:   "in",
+		ZipCode:   "600001",
+	}
+
+	suite.mockUserRepo.EXPECT().Upsert(userModel).Return(nil).Times(1)
+	suite.mockAddressRepo.EXPECT().Upsert(addressModel).Return(errors.New("address update error")).Times(1)
 
 	err := suite.userService.UpdateUser("123", req)
 	assert.Error(suite.T(), err)
@@ -342,4 +441,48 @@ func (suite *userServiceTestSuite) TestUserModelToDtos() {
 
 	result := UserModelToDtos(userModel, addressModel)
 	assert.Equal(suite.T(), expected, result)
+}
+
+func (suite *userServiceTestSuite) TestUserDtosToModel_AddressIdMissing() {
+	userId := "user-789"
+	input := &dtos.User{
+		Id:     userId,
+		Name:   "Carol",
+		Email:  "carol@example.com",
+		Mobile: "7777777777",
+		Address: dtos.Address{
+			AddressId: "",
+			City:      "Mumbai",
+		},
+		Role: constants.RoleCustomer,
+	}
+
+	userModel, addressModel := UserDtosToModel(input)
+
+	assert.Equal(suite.T(), userId, userModel.Id)
+	assert.NotEmpty(suite.T(), userModel.AddressId)
+	assert.Equal(suite.T(), userModel.AddressId, addressModel.AddressId)
+	assert.Equal(suite.T(), "Mumbai", addressModel.City)
+}
+
+func (suite *userServiceTestSuite) TestUserDtosToModel_UserIdMissing() {
+	addressId := "addr-456"
+	input := &dtos.User{
+		Id:     "",
+		Name:   "Bob",
+		Email:  "bob@example.com",
+		Mobile: "8888888888",
+		Address: dtos.Address{
+			AddressId: addressId,
+			City:      "Bangalore",
+		},
+		Role: constants.RoleAdmin,
+	}
+
+	userModel, addressModel := UserDtosToModel(input)
+
+	assert.NotEmpty(suite.T(), userModel.Id)
+	assert.Equal(suite.T(), addressId, userModel.AddressId)
+	assert.Equal(suite.T(), addressId, addressModel.AddressId)
+	assert.Equal(suite.T(), "Bangalore", addressModel.City)
 }

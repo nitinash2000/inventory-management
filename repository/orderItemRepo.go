@@ -90,7 +90,7 @@ func (o *orderItemRepo) GetByOrder(orderId string) ([]*models.OrderItem, error) 
 }
 
 func (o *orderItemRepo) DeleteAll(orderItemIds []string) error {
-	tx := o.db.Table(o.getTable()).Where(`order_item_id IN (?)1`, orderItemIds).Delete(&models.OrderItem{})
+	tx := o.db.Table(o.getTable()).Where(`order_item_id IN (?)`, orderItemIds).Delete(&models.OrderItem{})
 	if tx.Error != nil || tx.RowsAffected == 0 {
 		return errors.New("error deleting orderItem")
 	}

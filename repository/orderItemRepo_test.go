@@ -172,3 +172,59 @@ func (suite *OrderItemRepoTestSuite) TestGetByOrderError() {
 	assert.Empty(suite.T(), result)
 	assert.Equal(suite.T(), "error getting orderItems", err.Error())
 }
+
+func (suite *OrderItemRepoTestSuite) TestDeleteAllOrderItem() {
+	orderItem := &models.OrderItem{
+		OrderItemId: "1234",
+		OrderId:     "12",
+		ArticleId:   "453",
+		Quantity:    5,
+	}
+	err := suite.orderItemRepo.Create(orderItem)
+	assert.NoError(suite.T(), err)
+
+	err = suite.orderItemRepo.DeleteAll([]string{orderItem.OrderItemId})
+
+	assert.NoError(suite.T(), err)
+
+	var deletedOrderItem models.OrderItem
+	err = suite.db.Table("order_items").Where("order_item_id = ?", orderItem.OrderItemId).First(&deletedOrderItem).Error
+	assert.Error(suite.T(), err)
+}
+
+func (suite *OrderItemRepoTestSuite) TestDeleteAllOrderItemError() {
+	err := suite.orderItemRepo.DeleteAll([]string{"123"})
+
+	assert.Error(suite.T(), err)
+	assert.Equal(suite.T(), "error deleting orderItem", err.Error())
+}
+
+func (suite *OrderItemRepoTestSuite) TestUpsertOrderItem() {
+	orderItem := &models.OrderItem{
+		OrderItemId: "upsert-123",
+		OrderId:     "order-001",
+		ArticleId:   "article-123",
+		Quantity:    10,
+	}
+
+	err := suite.orderItemRepo.Upsert(orderItem)
+	assert.NoError(suite.T(), err)
+
+	var savedOrderItem models.OrderItem
+	err = suite.db.Table("order_items").Where("order_item_id = ?", orderItem.OrderItemId).First(&savedOrderItem).Error
+	assert.NoError(suite.T(), err)
+	assert.Equal(suite.T(), orderItem.OrderItemId, savedOrderItem.OrderItemId)
+	assert.Equal(suite.T(), orderItem.ArticleId, savedOrderItem.ArticleId)
+	assert.Equal(suite.T(), orderItem.Quantity, savedOrderItem.Quantity)
+}
+
+func (suite *OrderItemRepoTestSuite) TestUpsertOrderItemError() {
+	orderItem := &models.OrderItem{
+		OrderItemId: "upsert-err-001",
+		OrderId:     "order-001",
+		Quantity:    2,
+	}
+
+	err := suite.orderItemRepo.Upsert(orderItem)
+	assert.Error(suite.T(), err)
+}
